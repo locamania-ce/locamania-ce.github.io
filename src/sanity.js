@@ -13,7 +13,7 @@ export async function getCatalog() {
   if (!client) return null
 
   const [pieces, designs, latestWorks] = await Promise.all([
-    client.fetch(`*[_type == "piece" && available == true] | order(name asc) { _id, name, category, price, dimensions, capacity, material, care, productionTime, "image": image.asset->url }`),
+    client.fetch(`*[_type == "piece" && available == true] | order(name asc) { _id, name, category, price, dimensions, capacity, material, care, productionTime, featured, "image": image.asset->url }`),
     client.fetch(`*[_type == "design" && availableForPurchase == true] | order(completedAt desc) { _id, name, "image": image.asset->url }`),
     client.fetch(`*[_type == "design"] | order(completedAt desc)[0...3] { _id, name, "image": image.asset->url }`),
   ])
