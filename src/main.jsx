@@ -79,6 +79,8 @@ function Header({ path, navigate, openCart, count }) {
 }
 
 function Home({ navigate, products, latestWorks }) {
+  const featuredProducts = products.filter((product) => product.featured)
+  const homeProducts = featuredProducts.length ? featuredProducts : products
   return <main id="inicio">
     <section className="hero"><div className="hero-copy"><p className="eyebrow">PIEZAS ÚNICAS, HECHAS A MANO</p><h1>Objetos que<br/><em>acompañan</em><br/>tus rituales.</h1><p className="hero-description">Cerámica artesanal creada lentamente para habitar tus momentos cotidianos.</p><button className="button primary" onClick={() => navigate('/tienda')}>Ver tienda <ArrowIcon/></button></div><div className="hero-visual"><div className="hero-shape"></div><img src="https://images.unsplash.com/photo-1495555961986-6d4c1ecb7be3?auto=format&fit=crop&w=1300&q=90" alt="Piezas de cerámica en tonos cálidos"/><span className="hero-note">hecho a<br/>mano</span></div></section>
     <section className="values" aria-label="Valores de Locamanía"><div><span>01</span><p>Modeladas a mano,<br/>una por una</p></div><div><span>02</span><p>Materiales nobles<br/>y duraderos</p></div><div><span>03</span><p>Pequeñas partidas,<br/>sin producción masiva</p></div></section>
