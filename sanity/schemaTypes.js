@@ -6,7 +6,7 @@ const piece = defineType({
   type: 'document',
   fields: [
     defineField({ name: 'name', title: 'Nombre', type: 'string', validation: (rule) => rule.required() }),
-    defineField({ name: 'category', title: 'Categoría', type: 'string', options: { list: ['Tazas', 'Sets', 'Jarrones', 'Mesa'] }, validation: (rule) => rule.required() }),
+    defineField({ name: 'category', title: 'Categoría', type: 'string', options: { list: ['Tazas', 'Cuencos', 'Bandejas', 'Platos', 'Otros'] }, validation: (rule) => rule.required() }),
     defineField({ name: 'price', title: 'Precio (ARS)', type: 'number', validation: (rule) => rule.required().positive() }),
     defineField({ name: 'image', title: 'Foto de la pieza', type: 'image', options: { hotspot: true }, validation: (rule) => rule.required() }),
     defineField({ name: 'dimensions', title: 'Medidas', type: 'string', description: 'Ej.: 9 cm de alto × 8 cm de diámetro' }),
