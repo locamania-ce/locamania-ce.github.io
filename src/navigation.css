@@ -1,0 +1,10 @@
+.header nav {
+  font-size: 14px;
+}
+
+.header nav a[href='/tienda'] {
+  color: var(--clay);
+  font-weight: 600;
+  padding-bottom: 4px;
+  border-bottom: 1px solid currentColor;
+}
