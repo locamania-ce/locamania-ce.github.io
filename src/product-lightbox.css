@@ -29,7 +29,8 @@
   position: absolute;
   inset: 0;
   border: 0;
-  background: rgba(40, 31, 25, .72);
+  background: rgba(40, 31, 25, .82);
+  backdrop-filter: blur(2px);
   cursor: zoom-out;
 }
 
@@ -55,10 +56,15 @@
   z-index: 2;
   width: 36px;
   height: 36px;
-  border: 0;
+  border: 1px solid rgba(246, 239, 227, .75);
   border-radius: 50%;
-  background: var(--paper);
-  color: var(--ink);
-  font: 28px/1 'DM Sans', sans-serif;
+  background: var(--clay);
+  box-shadow: 3px 3px 0 var(--paper);
+  color: var(--paper);
+  font: 25px/1 'DM Sans', sans-serif;
   cursor: pointer;
+}
+
+.image-lightbox-close:hover {
+  transform: rotate(8deg) scale(1.06);
 }
