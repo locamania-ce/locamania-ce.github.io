@@ -1,0 +1,32 @@
+.quantity-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  margin: 11px 0 7px;
+  border: 1px solid var(--line);
+}
+
+.cart-item .quantity-control button {
+  width: 27px;
+  height: 27px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(146, 88, 66, .1);
+  color: var(--clay);
+  font: 20px/1 'DM Sans', sans-serif;
+  text-decoration: none;
+}
+
+.quantity-control span {
+  min-width: 12px;
+  text-align: center;
+  font: 12px 'DM Sans', sans-serif;
+}
+
+.cart-item .item-subtotal {
+  display: block;
+  margin-bottom: 6px;
+  font: 10px 'DM Sans', sans-serif;
+  color: #62554b;
+}

@@ -10,6 +10,7 @@ import './story-image.css'
 import './palette.css'
 import './hero-filter.css'
 import './product-lightbox.css'
+import './cart-quantity.css'
 import { getCatalog } from './sanity'
 import portadaLocamania from './assets/portada-locamania.jpeg'
 import magaliHistoria from './assets/magali-historia.png'
@@ -58,14 +59,15 @@ function App() {
     setPath(to)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
-  const addToCart = (product, design, notes) => { setCart((current) => [...current, { ...product, design: design.name, isCustom: Boolean(design.isCustom), notes: notes.trim() }]); setCartOpen(true) }
+  const addToCart = (product, design, notes) => { const normalizedNotes = notes.trim(); setCart((current) => { const existingIndex = current.findIndex((item) => item.id === product.id && item.design === design.name && item.notes === normalizedNotes); if (existingIndex === -1) return [...current, { ...product, design: design.name, isCustom: Boolean(design.isCustom), notes: normalizedNotes, quantity: 1 }]; return current.map((item, index) => index === existingIndex ? { ...item, quantity: (item.quantity || 1) + 1 } : item) }); setCartOpen(true) }
   const removeFromCart = (index) => setCart((current) => current.filter((_, i) => i !== index))
+  const updateQuantity = (index, change) => setCart((current) => current.flatMap((item, itemIndex) => { if (itemIndex !== index) return item; const quantity = (item.quantity || 1) + change; return quantity > 0 ? { ...item, quantity } : [] }))
 
   return <>
-    <Header path={path} navigate={navigate} openCart={() => setCartOpen(true)} count={cart.length}/>
+    <Header path={path} navigate={navigate} openCart={() => setCartOpen(true)} count={cart.reduce((total, item) => total + (item.quantity || 1), 0)}/>
     {path === '/tienda' ? <StorePage addToCart={addToCart} products={catalog.products} designs={catalog.designs} /> : <Home navigate={navigate} products={catalog.products} latestWorks={catalog.latestWorks}/>} 
     <Footer navigate={navigate}/>
-    <Cart cart={cart} isOpen={isCartOpen} close={() => setCartOpen(false)} remove={removeFromCart}/>
+    <Cart cart={cart} isOpen={isCartOpen} close={() => setCartOpen(false)} remove={removeFromCart} updateQuantity={updateQuantity}/>
   </>
 }
 
@@ -115,17 +117,18 @@ function ProductImage({ product, allowPreview }) { const [isPreviewOpen, setPrev
 
 function ProductCard({ product, onChoose, chooseLabel = 'Ver pieza', allowPreview = false }) { const [isOpen, setOpen] = useState(false); return <article className="product"><div className={`product-image ${product.tone}`}><ProductImage product={product} allowPreview={allowPreview}/>{product.tag && <span>{product.tag}</span>}<button onClick={onChoose} aria-label={`${chooseLabel}: ${product.name}`}>+</button></div><div className="product-info"><div><h3>{product.name}</h3><p>{product.category}</p></div><strong>{money.format(product.price)}</strong></div><button className="details-button" onClick={() => setOpen(!isOpen)} aria-expanded={isOpen}>{isOpen ? 'Ocultar detalles' : 'Detalles'} <span>{isOpen ? '−' : '+'}</span></button>{isOpen && <div className="piece-details"><div><span>Medidas</span><p>{product.dimensions || 'A confirmar'}</p></div><div><span>Capacidad</span><p>{product.capacity || 'A confirmar'}</p></div></div>}</article> }
 
-function Cart({ cart, isOpen, close, remove }) {
-  const total = cart.reduce((sum, item) => sum + item.price, 0)
+function Cart({ cart, isOpen, close, remove, updateQuantity }) {
+  const total = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0)
   const hasCustomDesign = cart.some((item) => item.isCustom)
   const orderMessage = [
     'Hola, quiero realizar el siguiente pedido en Locamanía:',
     '',
     ...cart.map((item, index) => [
-      `${index + 1}. ${item.name}`,
+      `${index + 1}. ${item.quantity || 1} × ${item.name}`,
       `   Diseño: ${item.design || 'Sin diseño seleccionado'}`,
       item.notes ? `   Detalles: ${item.notes}` : '',
-      `   ${item.isCustom ? 'Precio de la pieza' : 'Precio'}: ${money.format(item.price)}`,
+      `   ${item.isCustom ? 'Precio por pieza' : 'Precio por unidad'}: ${money.format(item.price)}`,
+      `   Subtotal: ${money.format(item.price * (item.quantity || 1))}`,
       item.isCustom ? '   Personalización: monto a definir' : '',
     ].filter(Boolean).join('\n')),
     '',
@@ -136,7 +139,7 @@ function Cart({ cart, isOpen, close, remove }) {
   ].join('\n')
   const sendOrder = () => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(orderMessage)}`, '_blank', 'noopener,noreferrer')
 
-  return <><aside className={`cart-panel ${isOpen ? 'visible' : ''}`} aria-hidden={!isOpen}><div className="cart-header"><h2>Tu bolsa <span>({cart.length})</span></h2><button onClick={close} aria-label="Cerrar carrito"><CloseIcon/></button></div>{cart.length === 0 ? <div className="empty-cart"><BagIcon/><p>Tu bolsa está vacía.</p></div> : <><div className="cart-items">{cart.map((item, index) => <div className="cart-item" key={`${item.id}-${index}`}><img src={item.image} alt=""/><div><h3>{item.name}</h3><small>Diseño: {item.design}</small><p>{item.isCustom ? 'Precio de la pieza: ' : ''}{money.format(item.price)}</p>{item.isCustom && <small>Personalización: monto a definir</small>}<button onClick={() => remove(index)}>Quitar</button></div></div>)}</div><div className="cart-total"><div><span>Subtotal de piezas</span><strong>{money.format(total)}</strong></div>{hasCustomDesign && <div><span>Personalización</span><strong>Monto a definir</strong></div>}<p>{hasCustomDesign ? `Total final: ${money.format(total)} + monto por personalización` : `Total final: ${money.format(total)}`}</p><button className="button primary" onClick={sendOrder}>Enviar pedido por WhatsApp <ArrowIcon/></button></div></>}</aside>{isOpen && <button className="backdrop" onClick={close} aria-label="Cerrar carrito"/>}</>
+  return <><aside className={`cart-panel ${isOpen ? 'visible' : ''}`} aria-hidden={!isOpen}><div className="cart-header"><h2>Tu bolsa <span>({cart.reduce((sum, item) => sum + (item.quantity || 1), 0)})</span></h2><button onClick={close} aria-label="Cerrar carrito"><CloseIcon/></button></div>{cart.length === 0 ? <div className="empty-cart"><BagIcon/><p>Tu bolsa está vacía.</p></div> : <><div className="cart-items">{cart.map((item, index) => <div className="cart-item" key={`${item.id}-${index}`}><img src={item.image} alt=""/><div><h3>{item.name}</h3><small>Diseño: {item.design}</small>{item.notes && <small>Detalles: {item.notes}</small>}<p>{item.isCustom ? 'Precio por pieza: ' : 'Precio por unidad: '}{money.format(item.price)}</p><div className="quantity-control" aria-label={`Cantidad de ${item.name}`}><button onClick={() => updateQuantity(index, -1)} aria-label={`Quitar una unidad de ${item.name}`}>−</button><span>{item.quantity || 1}</span><button onClick={() => updateQuantity(index, 1)} aria-label={`Agregar una unidad de ${item.name}`}>+</button></div><strong className="item-subtotal">Subtotal: {money.format(item.price * (item.quantity || 1))}</strong>{item.isCustom && <small>Personalización: monto a definir</small>}<button onClick={() => remove(index)}>Quitar</button></div></div>)}</div><div className="cart-total"><div><span>Subtotal de piezas</span><strong>{money.format(total)}</strong></div>{hasCustomDesign && <div><span>Personalización</span><strong>Monto a definir</strong></div>}<p>{hasCustomDesign ? `Total final: ${money.format(total)} + monto por personalización` : `Total final: ${money.format(total)}`}</p><button className="button primary" onClick={sendOrder}>Enviar pedido por WhatsApp <ArrowIcon/></button></div></>}</aside>{isOpen && <button className="backdrop" onClick={close} aria-label="Cerrar carrito"/>}</>
 }
 
 function Footer({ navigate }) { return <footer><a className="brand" href="/" onClick={(event) => { event.preventDefault(); navigate('/') }}>Locamanía<span>hecho con amor</span></a><p>© 2026 · Hecho con amor en Argentina</p><div><a href="https://www.instagram.com/locamania.ce/" target="_blank" rel="noreferrer">Instagram</a></div></footer> }
