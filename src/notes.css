@@ -1,0 +1,32 @@
+.design-notes {
+  display: grid;
+  gap: 9px;
+  max-width: 620px;
+  margin: 0 0 22px;
+}
+
+.design-notes > span {
+  font: 13px 'Fraunces', serif;
+}
+
+.design-notes em {
+  font: 11px 'DM Sans', sans-serif;
+  color: #686961;
+}
+
+.design-notes textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  border: 1px solid rgba(36, 37, 31, .3);
+  border-radius: 0;
+  background: rgba(244, 240, 233, .72);
+  color: var(--ink);
+  padding: 13px 14px;
+  font: 14px/1.5 'DM Sans', sans-serif;
+}
+
+.design-notes textarea:focus {
+  outline: 2px solid var(--clay);
+  outline-offset: 2px;
+}

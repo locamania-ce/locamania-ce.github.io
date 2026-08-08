@@ -4,6 +4,7 @@ import './styles.css'
 import './shop.css'
 import './artisan.css'
 import './details.css'
+import './notes.css'
 import { getCatalog } from './sanity'
 
 const fallbackProducts = [
@@ -50,7 +51,7 @@ function App() {
     setPath(to)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
-  const addToCart = (product, design) => { setCart((current) => [...current, { ...product, design: design.name, isCustom: Boolean(design.isCustom) }]); setCartOpen(true) }
+  const addToCart = (product, design, notes) => { setCart((current) => [...current, { ...product, design: design.name, isCustom: Boolean(design.isCustom), notes: notes.trim() }]); setCartOpen(true) }
   const removeFromCart = (index) => setCart((current) => current.filter((_, i) => i !== index))
 
   return <>
@@ -94,12 +95,13 @@ function StorePage({ addToCart, products, designs }) {
   const [category, setCategory] = useState('Todo')
   const [selectedPiece, setSelectedPiece] = useState(null)
   const [selectedDesign, setSelectedDesign] = useState(null)
+  const [notes, setNotes] = useState('')
   const categories = ['Todo', ...new Set(products.map((p) => p.category))]
   const filtered = useMemo(() => category === 'Todo' ? products : products.filter((p) => p.category === category), [category])
-  const choosePiece = (product) => { setSelectedPiece(product); setSelectedDesign(null); window.setTimeout(() => document.querySelector('#elegir-diseno')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0) }
-  const confirm = () => { if (selectedPiece && selectedDesign) { addToCart(selectedPiece, selectedDesign); setSelectedPiece(null); setSelectedDesign(null) } }
+  const choosePiece = (product) => { setSelectedPiece(product); setSelectedDesign(null); setNotes(''); window.setTimeout(() => document.querySelector('#elegir-diseno')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0) }
+  const confirm = () => { if (selectedPiece && selectedDesign) { addToCart(selectedPiece, selectedDesign, notes); setSelectedPiece(null); setSelectedDesign(null); setNotes('') } }
 
-  return <main className="store-page"><section className="store-hero"><p className="eyebrow">TIENDA LOCOMANÍA</p><h1>Elegí una pieza<br/><em>hecha para vos.</em></h1><p>Primero seleccioná la pieza. Después elegí uno de nuestros diseños o pedí uno personalizado.</p><p className="handmade-note">Cada pieza se realiza por encargo. Al ser hecha a mano, puede presentar pequeñas variaciones que la hacen única.</p></section><section className="shop store-shop"><div className="filters" aria-label="Filtrar productos">{categories.map((item) => <button key={item} className={category === item ? 'active' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div><div className="product-grid">{filtered.map((product) => <ProductCard product={product} key={product.id} onChoose={() => choosePiece(product)} chooseLabel="Elegir pieza"/>)}</div></section>{selectedPiece && <section id="elegir-diseno" className="design-picker"><div className="picker-heading"><div><p className="eyebrow">PASO 2 DE 2</p><h2>Elegí el diseño para<br/><em>{selectedPiece.name}.</em></h2></div><button onClick={() => setSelectedPiece(null)} className="cancel-selection">Cambiar pieza</button></div><div className="picker-grid">{designs.map((design) => <button className={`design-option ${selectedDesign?.id === design.id ? 'selected' : ''}`} key={design.id} onClick={() => setSelectedDesign(design)} aria-pressed={selectedDesign?.id === design.id}><img src={design.image} alt={`Elegir diseño ${design.name}`}/><span>{design.name}</span></button>)}<button className={`custom-option ${selectedDesign?.id === 'personalizado' ? 'selected' : ''}`} onClick={() => setSelectedDesign({ id: 'personalizado', name: 'Diseño personalizado', isCustom: true })}><span>+</span><strong>Crear un diseño personalizado</strong><p>Contanos tu idea al realizar el pedido.</p></button></div><div className="selection-bar"><div><span>Pieza</span><strong>{selectedPiece.name}</strong></div><div><span>Diseño</span><strong>{selectedDesign?.name || 'Elegí una opción'}</strong></div><button className="button primary" onClick={confirm} disabled={!selectedDesign}>Agregar a la bolsa <ArrowIcon/></button></div></section>}</main>
+  return <main className="store-page"><section className="store-hero"><p className="eyebrow">TIENDA LOCOMANÍA</p><h1>Elegí una pieza<br/><em>hecha para vos.</em></h1><p>Primero seleccioná la pieza. Después elegí uno de nuestros diseños o pedí uno personalizado.</p><p className="handmade-note">Cada pieza se realiza por encargo. Al ser hecha a mano, puede presentar pequeñas variaciones que la hacen única.</p></section><section className="shop store-shop"><div className="filters" aria-label="Filtrar productos">{categories.map((item) => <button key={item} className={category === item ? 'active' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div><div className="product-grid">{filtered.map((product) => <ProductCard product={product} key={product.id} onChoose={() => choosePiece(product)} chooseLabel="Elegir pieza"/>)}</div></section>{selectedPiece && <section id="elegir-diseno" className="design-picker"><div className="picker-heading"><div><p className="eyebrow">PASO 2 DE 2</p><h2>Elegí el diseño para<br/><em>{selectedPiece.name}.</em></h2></div><button onClick={() => setSelectedPiece(null)} className="cancel-selection">Cambiar pieza</button></div><div className="picker-grid">{designs.map((design) => <button className={`design-option ${selectedDesign?.id === design.id ? 'selected' : ''}`} key={design.id} onClick={() => setSelectedDesign(design)} aria-pressed={selectedDesign?.id === design.id}><img src={design.image} alt={`Elegir diseño ${design.name}`}/><span>{design.name}</span></button>)}<button className={`custom-option ${selectedDesign?.id === 'personalizado' ? 'selected' : ''}`} onClick={() => setSelectedDesign({ id: 'personalizado', name: 'Diseño personalizado', isCustom: true })}><span>+</span><strong>Crear un diseño personalizado</strong><p>Contanos tu idea al realizar el pedido.</p></button></div><label className="design-notes"><span>Detalles para esta pieza <em>(opcional)</em></span><textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Ej.: fondo crema, flores azules, incluir el nombre Lucía..." rows="4"/></label><div className="selection-bar"><div><span>Pieza</span><strong>{selectedPiece.name}</strong></div><div><span>Diseño</span><strong>{selectedDesign?.name || 'Elegí una opción'}</strong></div><button className="button primary" onClick={confirm} disabled={!selectedDesign}>Agregar a la bolsa <ArrowIcon/></button></div></section>}</main>
 }
 
 function ProductCard({ product, onChoose, chooseLabel = 'Ver pieza' }) { const [isOpen, setOpen] = useState(false); return <article className="product"><div className={`product-image ${product.tone}`}><img src={product.image} alt={product.name}/>{product.tag && <span>{product.tag}</span>}<button onClick={onChoose} aria-label={`${chooseLabel}: ${product.name}`}>+</button></div><div className="product-info"><div><h3>{product.name}</h3><p>{product.category}</p></div><strong>{money.format(product.price)}</strong></div><button className="details-button" onClick={() => setOpen(!isOpen)} aria-expanded={isOpen}>{isOpen ? 'Ocultar detalles' : 'Ver medidas'} <span>{isOpen ? '−' : '+'}</span></button>{isOpen && <div className="piece-details"><div><span>Medidas</span><p>{product.dimensions || 'A confirmar'}</p></div><div><span>Capacidad</span><p>{product.capacity || 'A confirmar'}</p></div></div>}</article> }
@@ -113,6 +115,7 @@ function Cart({ cart, isOpen, close, remove }) {
     ...cart.map((item, index) => [
       `${index + 1}. ${item.name}`,
       `   Diseño: ${item.design || 'Sin diseño seleccionado'}`,
+      item.notes ? `   Detalles: ${item.notes}` : '',
       `   ${item.isCustom ? 'Precio de la pieza' : 'Precio'}: ${money.format(item.price)}`,
       item.isCustom ? '   Personalización: monto a definir' : '',
     ].filter(Boolean).join('\n')),
