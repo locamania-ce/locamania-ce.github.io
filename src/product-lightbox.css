@@ -29,8 +29,8 @@
   position: absolute;
   inset: 0;
   border: 0;
-  background: rgba(40, 31, 25, .82);
-  backdrop-filter: blur(2px);
+  background: rgba(40, 31, 25, .94);
+  backdrop-filter: blur(4px);
   cursor: zoom-out;
 }
 
