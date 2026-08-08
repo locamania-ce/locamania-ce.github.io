@@ -53,24 +53,3 @@
   object-fit: contain;
   box-shadow: 0 18px 50px rgba(24, 17, 12, .35);
 }
-
-.image-lightbox .image-lightbox-close {
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  z-index: 2;
-  width: 36px;
-  height: 36px;
-  border: 1px solid rgba(246, 239, 227, .75);
-  border-radius: 50%;
-  background: var(--clay);
-  box-shadow: 3px 3px 0 var(--paper);
-  color: var(--paper);
-  font: 25px/1 'DM Sans', sans-serif;
-  cursor: pointer;
-  opacity: 1;
-}
-
-.image-lightbox-close:hover {
-  transform: rotate(8deg) scale(1.06);
-}
