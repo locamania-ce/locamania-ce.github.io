@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Locamanía">
+  <rect width="512" height="512" rx="104" fill="#f6efe3"/>
+  <circle cx="256" cy="256" r="184" fill="none" stroke="#925842" stroke-width="16"/>
+  <text x="244" y="344" text-anchor="middle" fill="#39312b" font-family="Georgia, serif" font-size="304" font-style="italic">L</text>
+  <circle cx="360" cy="150" r="18" fill="#925842"/>
+</svg>
