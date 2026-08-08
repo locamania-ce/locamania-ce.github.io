@@ -1,0 +1,3 @@
+.hero-visual img {
+  filter: saturate(.72) sepia(.22) contrast(.97) brightness(.99);
+}

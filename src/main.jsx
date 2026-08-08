@@ -6,6 +6,9 @@ import './artisan.css'
 import './details.css'
 import './notes.css'
 import './navigation.css'
+import './story-image.css'
+import './palette.css'
+import './hero-filter.css'
 import { getCatalog } from './sanity'
 import portadaLocamania from './assets/portada-locamania.jpeg'
 import magaliHistoria from './assets/magali-historia.png'
@@ -90,7 +93,7 @@ function Home({ navigate, products, latestWorks }) {
     <section className="values" aria-label="Valores de Locamanía"><div><span>01</span><p>Modeladas a mano,<br/>una por una</p></div><div><span>02</span><p>Materiales nobles<br/>y duraderos</p></div><div><span>03</span><p>Pequeñas partidas,<br/>sin producción masiva</p></div></section>
     <section className="shop shop-preview"><div className="section-heading"><div><p className="eyebrow">LA TIENDA</p><h2>Piezas para todos los días.</h2></div><button className="text-link" onClick={() => navigate('/tienda')}>Ir a la tienda <ArrowIcon/></button></div><div className="product-grid">{homeProducts.slice(0, 3).map((product) => <ProductCard product={product} key={product.id} onChoose={() => navigate('/tienda')}/>)}</div></section>
     <section id="trabajos" className="works"><div className="section-heading"><div><p className="eyebrow">HECHO A MEDIDA</p><h2>Últimos diseños.</h2></div></div><div className="works-grid">{latestWorks.map((work) => <img key={work.id} src={work.image} alt="Trabajo de cerámica realizado por Locamanía"/>)}</div></section>
-    <section id="historia" className="story"><div className="story-photo"><img src={magaliHistoria} alt="Magali junto a sus piezas de cerámica en una feria"/></div><div className="story-copy"><p className="eyebrow">DEL BARRO A TU CASA</p><h2>Hechas para ser usadas, queridas y recordadas.</h2><p>Cada pieza empieza como un gesto entre las manos. Aceptamos las marcas del proceso y celebramos las pequeñas diferencias que hacen a cada objeto irrepetible.</p></div></section>
+    <section id="historia" className="story"><div className="story-photo"><img src={magaliHistoria} alt="Magali junto a sus piezas de cerámica en una feria"/></div><div className="story-copy"><p className="eyebrow">DEL BARRO A TU CASA</p><h2>Hechas para ser usadas, queridas y recordadas.</h2><p>Detrás de Locamanía estoy yo, Magali. Cada pieza nace de mis manos, entre pruebas, colores, pinceles y muchas ganas de crear objetos que acompañen momentos cotidianos.</p><p>Trabajo en pequeñas partidas, cuidando cada detalle y aceptando las marcas únicas que deja el proceso. Porque para mí, la cerámica no busca ser perfecta: busca contar una historia y encontrar un lugar en tu casa.</p></div></section>
   </main>
 }
 

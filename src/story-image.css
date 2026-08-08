@@ -1,0 +1,21 @@
+.story {
+  min-height: 0;
+  align-items: center;
+}
+
+.story-photo {
+  min-height: 0;
+  height: 400px;
+  margin: 44px 0;
+}
+
+.story-photo img {
+  object-position: center 55%;
+}
+
+@media (max-width: 720px) {
+  .story-photo {
+    height: 340px;
+    margin: 0;
+  }
+}
